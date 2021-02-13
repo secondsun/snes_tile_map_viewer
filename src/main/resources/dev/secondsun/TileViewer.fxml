@@ -12,6 +12,8 @@
       fx:controller="dev.secondsun.controller.TileViewer"
             >
     <ImageView fx:id="originalImage" ></ImageView>
+    <ImageView fx:id="renderedPalette" ></ImageView>
     <GridPane fx:id="tilesView" />
     <ImageView fx:id="renderedImage" ></ImageView>
+
 </VBox>

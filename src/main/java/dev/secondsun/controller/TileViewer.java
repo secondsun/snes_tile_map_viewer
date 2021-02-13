@@ -39,6 +39,9 @@ public class TileViewer {
     private ImageView originalImage;
 
     @FXML
+    private ImageView renderedPalette;
+
+    @FXML
     private ImageView renderedImage;
 
     @FXML
@@ -66,6 +69,8 @@ public class TileViewer {
         tilesView.prefHeight(600);
         tilesView.prefWidth(600);
 
+        renderedPalette.setImage(SwingFXUtils.toFXImage(map.getPalette().draw(), null));
+
         BufferedImage image = assembleImage(map, tiles);
         renderedImage.setImage(SwingFXUtils.toFXImage(image, null));
     }
@@ -90,8 +95,8 @@ public class TileViewer {
     private BufferedImage renderTile(TileEntry entry, List<Tile> tiles, TilePalette palette) {
         var tile = tiles.get(entry.tileIndex);
         var image = new BufferedImage(8, 8, BufferedImage.TYPE_INT_RGB);
-        for (int row = 0; row < 7; row++) {
-            for (int column = 0; column < 7; column++) {
+        for (int row = 0; row < 8; row++) {
+            for (int column = 0; column < 8; column++) {
                 var pixel = tile.getRow(row).getPixel(column);
 
                 int correctRow = column;
@@ -104,7 +109,7 @@ public class TileViewer {
                     correctRow = 7 - correctRow;
                 }
                 try {
-                    image.setRGB(correctRow, correctColumn, toRGB(pixel, entry));
+                    image.setRGB(correctRow, correctColumn, toRGB(pixel, palette, entry));
                 } catch (ArrayIndexOutOfBoundsException ex) {
                     Logger.getAnonymousLogger().log(Level.SEVERE, String.format("%d,%d out of bounds", correctRow, correctColumn));
                 }
@@ -113,17 +118,9 @@ public class TileViewer {
         return image;
     }
 
-    private int toRGB(byte pixel, TileEntry entry) {
-        int blue = pixel & 0b011000000>> 4 | ((entry.paletteNumber & 0b100)>>1);
-        int green = pixel & 0b000111000 >> 2| ((entry.paletteNumber & 0b010)>>1);
-        int red = ((pixel & 0b000000111) << 1)| ((entry.paletteNumber & 0b001));;
-        int rgb =  ((red*8)<<16 | (green * 8)<<8 | (blue*8) );
-        if (pixel != 0 || entry.paletteNumber != 0) {
-            System.out.println(Integer.toBinaryString(pixel));
-            System.out.println(Integer.toBinaryString(entry.paletteNumber));
-            System.out.println(Integer.toBinaryString(rgb));
-        }
-        return rgb;
+    private int toRGB(byte pixel, TilePalette palette, TileEntry entry) {
+
+        return palette.getRGB(entry.paletteNumber * 16 + pixel);
     }
 
     private BufferedImage renderTile(Tile tile, TilePalette palette) {
@@ -154,15 +151,15 @@ public class TileViewer {
                         for (int row = 0; row < 8; row = row + 1) {
                             var bp1 = stream.read();
                             var bp2 = stream.read();
-                            rows.get(row).applyBitplane(bp1, 3);
-                            rows.get(row).applyBitplane(bp2, 2);
+                            rows.get(row).applyBitplane(bp1, 0);
+                            rows.get(row).applyBitplane(bp2, 1);
                         }
                         //read bp3
                         for (int row = 0; row < 8; row = row + 1) {
                             var bp3 = stream.read();
                             var bp4 = stream.read();
-                            rows.get(row).applyBitplane(bp3, 1);
-                            rows.get(row).applyBitplane(bp4, 0);
+                            rows.get(row).applyBitplane(bp3, 2);
+                            rows.get(row).applyBitplane(bp4, 3);
                         }
                         tiles.add(new Tile(rows));
                     }
@@ -194,9 +191,9 @@ public class TileViewer {
             var stream = new FileInputStream(set.getPallette());
             var palette = new TilePalette();
             var count = 0;
-            int highbyte;
-            while ((highbyte = stream.read()) != -1) {
-                var lowbyte = stream.read();
+            int highbyte, lowbyte;
+            while ((lowbyte = stream.read()) != -1) {
+                highbyte = stream.read();
                 var word = highbyte << 8 | lowbyte;
                 var blue = (word & 0b0111110000000000) >> 10;
                 var green = (word & 0b0000001111100000)  >> 5;
