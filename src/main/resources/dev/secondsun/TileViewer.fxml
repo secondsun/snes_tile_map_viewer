@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.image.ImageView?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="dev.secondsun.controller.TileViewer"
+            >
+    <ImageView fx:id="originalImage" ></ImageView>
+    <GridPane fx:id="tilesView" />
+    <ImageView fx:id="renderedImage" ></ImageView>
+</VBox>
