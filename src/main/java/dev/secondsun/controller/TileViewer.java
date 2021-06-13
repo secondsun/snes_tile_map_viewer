@@ -28,11 +28,11 @@ public class TileViewer {
 
     ;
 
-    private static final String exampleLocation = "/home/summerspittman/Projects/SNES_demoscene/libSFX/examples/Hello/Data/";
+    private static final String exampleLocation = "C:\\Users\\secon\\Projects\\libSFX\\examples\\Hello\\Data\\";
     private static final String image = exampleLocation + "SNES.png";
     private static final String map = exampleLocation + "SNES.png.map";
     private static final String tiles = exampleLocation + "SNES.png.tiles";
-    private static final String palette = exampleLocation + "SNES.png.palette";
+    private static final String palette = exampleLocation + "palette.bin";
 
 
     @FXML

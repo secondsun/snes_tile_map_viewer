@@ -15,10 +15,10 @@ public class PickerController {
 
     @FXML
     public void initialize() {
-        tree.setRoot(new SimpleFileTreeItem(new File("/home/summerspittman/Projects/SNES_demoscene/libSFX/examples") {
+        tree.setRoot(new SimpleFileTreeItem(new File("C:\\Users\\secon\\Projects\\libSFX\\examples") {
             @Override
             public String toString() {
-                return super.toString().split("/home/summerspittman/Projects/SNES_demoscene/libSFX/")[1];
+                return super.toString().split("C:\\\\Users\\\\secon\\\\Projects\\\\libSFX\\\\")[1];
             }
         }));
 
